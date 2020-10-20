@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  virtual-assistant 
+
+  Sample SAM Template for virtual-assistant 
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 300
+
+Parameters:
+
+  AWSRegion:
+    Type: String
+    Description: Var1
+    Default: string1
+  
+  Var1:
+    Type: String
+    Description: Var1
+    Default: string1
+
+  Var2:
+    Type: String
+    Description: string2
+    Default: string1
+    
+  Var3:
+    Type: String
+    Description: string3
+    Default: string1
+
+Resources:
+  VAFunctionRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: Allow
+            Principal: 
+              Service: 
+                - lambda.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      Path: "/service-role/"
+      Policies: 
+        - 
+          PolicyName: LambdaPersonalizePolicy
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement:
+              - 
+                Effect: Allow 
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: 
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*:*"
+
+  VirtualAssistantFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-parse-email-lf"
+      Description: Function for parsing the incoming email requests
+      CodeUri: virtual_assistant/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          REGION: !Ref AWSRegion
+          VAR1: !Ref Var1
+          VAR2: !Ref Var2
+          VAR3: !Ref Var3
+      Role: !GetAtt VAFunctionRole.Arn
+
+Outputs:
+  VirtualAssistantFunction:
+    Description: "Virtual Assistant Lamda Function ARN"
+    Value: !GetAtt VirtualAssistantFunction.Arn
+  VirtualAssistantFunctionIamRole:
+    Description: " IAM Role created for Virtual Assistant Lamda Function"
+    Value: !GetAtt VAFunctionRole.Arn

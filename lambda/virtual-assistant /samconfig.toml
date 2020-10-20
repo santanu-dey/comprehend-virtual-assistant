@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "vastack"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1mneigc63edv4"
+s3_prefix = "vastack"
+region = "us-east-1"
+profile = "sap"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "AWSRegion=\"string1\" Var1=\"string1\" Var2=\"string1\" Var3=\"string1\""
